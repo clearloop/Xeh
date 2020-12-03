@@ -1,40 +1,59 @@
 //! Encode to hex
-/// To hex
+use super::{util::char2u8, vec::SliceVec, Hex, HEX};
+
+/// Primitives To hex
 pub trait ToHex {
-    /// Target chars
-    type Hex;
     /// To chars
-    fn hex(&self) -> Option<Self::Hex>;
+    fn hex(&self) -> Option<Hex>;
 }
 
-impl ToHex for &u8 {
-    type Hex = Hex;
-    fn hex(&self) -> Option<Self::Hex> {
-        Some([HEX[(*self >> 4) as usize], HEX[(*self & 0xf) as usize]])
+impl<'x> ToHex for &u8 {
+    fn hex(&self) -> Option<Hex> {
+        let mut dest = Hex::default();
+        dest.extend_from_slice(&SliceVec::from(&mut [
+            HEX[(*self >> 4) as usize],
+            HEX[(*self & 0xf) as usize],
+        ]));
+
+        Some(dest)
     }
 }
 
-impl ToHex for &char {
-    type Hex = [Option<Hex>; 4];
-    fn hex(&self) -> Option<Self::Hex> {
-        let mut res = Self::Hex::default();
-        let mut raw = self.to_digit(36)?;
+impl<'x> ToHex for &'x char {
+    fn hex(&self) -> Option<Hex> {
+        let src = char2u8(&self)?;
+        let mut dest = Hex::default();
 
-        for mut i in 0..8 {
-            i = 7 - i;
-            if i % 2 == 0 {
-                if let Some(inner) = res[i / 2].as_mut() {
-                    inner[0] = HEX[(raw & 0xf) as usize];
-                }
-            } else {
-                if raw == 0 {
-                    break;
-                }
-                res[i / 2] = Some([HEX[0], HEX[(raw & 0xf) as usize]]);
+        for (p, q) in src.iter().enumerate() {
+            if src[3 - p] == 0 {
+                break;
             }
-            raw >>= 4;
+
+            dest.extend_from_slice(&(&q).hex()?);
         }
 
-        Some(res)
+        Some(dest)
+    }
+}
+
+impl<'x> ToHex for &'x [u8] {
+    fn hex(&self) -> Option<Hex> {
+        let mut dest = SliceVec::default();
+        for i in self.iter() {
+            dest.extend_from_slice(&i.hex()?);
+        }
+
+        Some(dest)
+    }
+}
+
+impl<'x> ToHex for &'x [char] {
+    fn hex(&self) -> Option<Hex> {
+        let mut dest: Hex = SliceVec::default();
+        for i in self.iter() {
+            dest.extend_from_slice(&[*i]);
+        }
+
+        Some(dest)
     }
 }

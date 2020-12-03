@@ -1,0 +1,16 @@
+name: xeh
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v1
+      - name: Build
+        run: cargo build -vv --release
