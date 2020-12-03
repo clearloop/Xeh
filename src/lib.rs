@@ -19,13 +19,12 @@ const HEX: [char; 16] = [
 ];
 
 /// Hex Primitive
-type Hex = [char; 2];
+type Hex<'x> = SliceVec<'x, char>;
 
 /// Encode str or bytes into hex iterator
-pub fn encode<'x, T>(target: &T) -> Option<impl From<SliceVec<'x, char>>>
+pub fn encode<T>(target: &T) -> Option<impl From<SliceVec<char>>>
 where
     T: ToHex,
-    <T as encode::ToHex>::Hex: core::convert::From<SliceVec<'x, char>>,
 {
     target.hex()?.into()
 }
