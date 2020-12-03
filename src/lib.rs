@@ -1,4 +1,13 @@
-//! The lightest `hex` dependency.
+//! ## Xeh
+//!
+//! The Lightest Hex Dependency in Rust
+//!
+//! If you REALLY want to import an `hex` dependency to handle `hex` stuffs in rust,
+//! this is exactly what you are looking for.
+//!
+//! ## LICENSE
+//!
+//! MIT
 #![no_std]
 #![deny(missing_docs)]
 
@@ -22,9 +31,9 @@ const HEX: [char; 16] = [
 type Hex<'x> = SliceVec<'x, char>;
 
 /// Encode str or bytes into hex iterator
-pub fn encode<T>(target: &T) -> Option<impl From<SliceVec<char>>>
+pub fn encode<T>(src: &T) -> Option<impl From<SliceVec<char>>>
 where
     T: ToHex,
 {
-    target.hex()?.into()
+    src.hex()?.into()
 }

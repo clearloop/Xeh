@@ -3,5 +3,9 @@ name = "xeh"
 version = "0.1.0"
 authors = ["clearloop <udtrokia@gmail.com>"]
 edition = "2018"
-
+description = "The Lightest Hex Dependency in Rust"
+repository = "https://github.com/clearloop/xeh"
+license = "MIT"
+documentation = "https://docs.rs/xeh"
+homepage = "https://github.com/clearloop/xeh"
 
